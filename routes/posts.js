@@ -8,30 +8,9 @@ router.get("/hello-posts", function (req, res) {
 
 router.get("/all-posts", async function (req, res) {
   try {
-    const collection = await postsDB().collection("redditposts");
-    const limit = Number(req.query.limit);
-    const skip = Number(req.query.limit) * (Number(req.query.page) - 1);
-    const sortField = req.query.sortField;
-    const sortOrder = req.query.sortOrder === "ASC" ? 1 : -1;
-    const filterField = req.query.filterField;
-    const filterValue = req.query.filterValue;
+    const collection = await postsDB().collection("posts");
+    const redditPosts = await collection;
 
-    let filterObj = {};
-    if (filterField && filterValue) {
-      filterObj = { [filterField]: filtervalue };
-    }
-
-    let sortObj = {};
-    if (sortField && sortOrder) {
-      sortObj = { [sortField]: sortOrder };
-    }
-
-    const redditPosts = await collection
-      .find(filterObj)
-      .sort(sortObj)
-      .limit(limit)
-      .skip(skip)
-      .toArray();
     res.json({ message: redditPosts });
   } catch (e) {
     console.error(e);
@@ -45,8 +24,9 @@ router.post("/post-submit", async function (req, res, next) {
   try {
     const title = req.body.title;
     const text = req.body.text;
+
     //need to figure out how to auto assign "author-field"
-    const collection = await blogsDB().collection("redditposts");
+    const collection = await postsDB().collection("posts");
     const postsCollection = await collection.count();
 
     const redditPost = {
@@ -70,7 +50,7 @@ router.get("/single-post/:postId", async function (req, res) {
   try {
     const postId = Number(req.params.postId);
     console.log(postId);
-    const collection = await blogsDB().collection("redditposts");
+    const collection = await postsDB().collection("posts");
     const post = await collection.findOne({ id: postId });
     console.log("Post: ", post);
     res.json(post);
