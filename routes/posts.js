@@ -9,8 +9,8 @@ router.get("/hello-posts", function (req, res) {
 router.get("/all-posts", async function (req, res) {
   try {
     const collection = await postsDB().collection("posts");
-    const redditPosts = await collection;
 
+    const redditPosts = await collection.find().toArray();
     res.json({ message: redditPosts });
   } catch (e) {
     console.error(e);
@@ -34,6 +34,7 @@ router.post("/post-submit", async function (req, res, next) {
       text: text,
       //   author: author,
       id: Number(postsCollection + 1),
+      commentIdList: [],
       createdAt: new Date(),
       lastModified: new Date(),
     };
@@ -49,11 +50,11 @@ router.post("/post-submit", async function (req, res, next) {
 router.get("/single-post/:postId", async function (req, res) {
   try {
     const postId = Number(req.params.postId);
-    console.log(postId);
+    console.log("Post ID #:", postId);
     const collection = await postsDB().collection("posts");
-    const post = await collection.findOne({ id: postId });
-    console.log("Post: ", post);
-    res.json(post);
+    const singlePost = await collection.findOne({ id: postId });
+    console.log("Post: ", singlePost);
+    res.json(singlePost);
   } catch (e) {
     console.error(e);
     res.status(500).send("Error! Can't find requested post.");

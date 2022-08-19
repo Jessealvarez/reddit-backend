@@ -38,7 +38,7 @@ router.put("/edit-post", async (req, res) => {
       text: text,
       lastModified: date,
     };
-
+    console.log(updatePost);
     await collection.updateOne({ id: postId }, { $set: { ...updatePost } });
     res.status(200).json({ message: "Post Updated", success: true });
   } catch (error) {
