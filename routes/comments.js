@@ -8,7 +8,7 @@ router.post("/new-comment/:postId", async function (req, res) {
     const commentsCollection = await postsDB().collection("comments");
     const commentsCount = await commentsCollection.count();
 
-    const postId = req.params.postId;
+    const postId = Number(req.params.postId);
     const comment = req.body.text;
 
     const commentId = Number(commentsCount + 1);
@@ -43,17 +43,19 @@ router.post("/new-comment/:postId", async function (req, res) {
   }
 });
 
-router.get("/:postId", async function (req, res) {
+router.get("/get-comments/:postId", async function (req, res) {
   try {
     //Get post from posts collection
     const postsCollection = await postsDB().collection("posts");
-    const postId = req.params.postId;
+    const postId = Number(req.params.postId);
 
     const post = await postsCollection.findOne({
       id: postId,
     });
 
-    const commentIdList = post.commentId;
+    console.log(post);
+
+    const commentIdList = post.commentIdList;
     const commentsCollection = await postsDB().collection("comments");
     const postComments = await commentsCollection
       .find({
@@ -78,6 +80,7 @@ router.get("/:postId", async function (req, res) {
 
 router.get("/all-comments", async function (req, res) {
   try {
+    console.log("");
     const collection = await postsDB().collection("comments");
 
     const comments = await collection.find().toArray();

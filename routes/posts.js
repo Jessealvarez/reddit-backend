@@ -19,6 +19,7 @@ router.get("/all-posts", async function (req, res) {
 });
 
 router.post("/post-submit", async function (req, res, next) {
+  console.log("hello from /post-submit");
   //in case of null
   console.log(req.body);
   try {
@@ -38,6 +39,8 @@ router.post("/post-submit", async function (req, res, next) {
       createdAt: new Date(),
       lastModified: new Date(),
     };
+
+    console.log("reddit post", redditPost);
 
     await collection.insertOne(redditPost);
     res.status(200).json({ message: "New Post Submitted" });
